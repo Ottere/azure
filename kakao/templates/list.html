@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>User Information and Form</title>
+	
+	<!--JQUERY-->
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	
+	<!-- FRAMEWORK BOOTSTRAP para el estilo de la pagina-->
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script 
+		src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script 
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	
+	<!-- Los iconos tipo Solid de Fontawesome-->
+	<link rel="stylesheet"
+		href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
+	<script src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+	
+	<!-- Nuestro css-->
+	<link rel="stylesheet" type="text/css" href="/kakao/static/css/user-form.css">
+	<!-- {{ url_for('static',filename='css/user-form.css') }} -->
+	<!-- DATA TABLE -->
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css">	
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+
+	<script type="text/javascript">
+	    $(document).ready(function() {
+	        //Asegurate que el id que le diste a la tabla sea igual al texto despues del simbolo #
+	        $('#userList').DataTable();
+	    } );
+	</script>
+</head>
+<body>
+
+	<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+		  	<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input class="form-control" type="text" placeholder="보낼 내용을 입력해 주세요" name="SendMsg">
+				</div>
+				<!-- <div id="result"></div> -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeBtn">닫기</button>
+					<button type="button" class="btn btn-primary" onclick='getCheckboxValue_Custom()'>보내기</button>
+				</div>
+		    </div>
+		</div>
+	</div>
+
+	<div class="container">
+	<div class="mx-auto col-sm-8 main-section" id="myTab" role="tablist">
+		<ul class="nav nav-tabs justify-content-end">
+			<li class="nav-item">
+				<a class="nav-link" href="/projects/index.html" role="tab" aria-controls="list" aria-selected="false">Home</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link active" id="list-tab" data-toggle="tab" href="#list" role="tab" aria-controls="list" aria-selected="false">List</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="list-tab-me" data-toggle="tab" href="#SendMe" role="tab" aria-controls="list" aria-selected="false">Me</a>
+			</li>
+			<!-- <li class="nav-item">
+				<a class="nav-link" id="list-tab-friend" data-toggle="tab" href="#SendFriend" role="tab" aria-controls="list" aria-selected="false">Friend</a>
+			</li> -->
+		</ul>
+
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
+				<div class="card">
+					<div class="card-header">
+						<h4>친구 목록</h4>
+						<button class="btn btn-outline-primary">
+							<a onclick='getCheckboxValue()' style="cursor:pointer;">선택한 친구에게 커스텀 메세지 보내기</a>
+						</button>
+					
+						<button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModalCenter">
+							선택한 친구에게 자유롭게 메세지 보내기
+						  </button>
+						<button class="btn btn-outline-secondary">
+							<a href="/kakao/UpdateAccessToken" style="text-decoration: none; color: black;">Access_Token 갱신</a>
+						</button>
+						<button class="btn btn-outline-secondary">
+							<a href="/kakao/UpdateRefreshKey" style="text-decoration: none; color: black;">Refresh_Token 갱신</a>
+						</button>
+						<button class="btn btn-outline-info">
+							<a href="/kakao/listUpdate" style="text-decoration: none; color: black;">친구 목록 갱신</a>
+						</button>
+						
+						<button class="btn btn-outline-secondary">
+							<a href="/kakao/KakaoAccept" style="text-decoration: none; color: black;">카카오 메세지 수신 동의하기</a>
+						</button>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive" style="overflow: auto;">
+							<table id="userList" class="table table-bordered table-hover table-striped" style="white-space: nowrap;">
+								<thead class="thead-light">
+									<tr>
+									   <th scope="col">checkbox</th>
+									   <th scope="col">UserName</th>
+									   <!-- <th scope="col">Token</th>
+									   <th scope="col">RefreshToken</th> -->
+									   <th scope="col">uuid</th>
+									   <!-- <th></th> -->
+									</tr>
+									</thead>
+									<tbody>
+									   {% for i in all_data%}
+										  <tr>
+											 <td><input type='checkbox'name='check_value' value='{{i.uuid}}'/></td>
+											 <td scope="row">{{i.UserName}}</td>
+											 <!-- <td>{{i.Token}}</td>
+											 <td>{{i.RefreshToken}}</td> -->
+											 <td>{{i.uuid}}</td>
+											 <!-- <td>
+												<a href="#" onclick="fEdit('{{i.idx}}','r{{i.FirstName}}','{{i.LastName}}','{{i.UserName}}','{{i.Email}}')"><i class="fas fa-edit"></i></a> | <a style="cursor: pointer;"id ="delete" onclick="fDel('{{i.idx}}')"><i class="fas fa-user-times"></i></a>
+											 </td> -->
+										  </tr>
+									   {%endfor%}
+									</tbody>
+							</table>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<!-- -------------------------------------------------------------------------- -->
+			<!-- 나에게 보내기  -->
+			<div class="tab-pane fade" id="SendMe" role="tabpanel" aria-labelledby="list-tab-me">
+				<div class="card">
+					<div class="card-header">
+						<h4>나에게 보내기</h4>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive" style="overflow: auto;">
+							<form action="/SendMe" method="POST">
+								<p>전송할 내용을 입력하세요.</p>
+								<textarea name = "Content" cols="50" rows="3" placeholder="내용을 입력하세요"></textarea>
+								<input type="submit">
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- --------------------------------------------------------- -->
+			<!-- 친구에게 보내기 -->
+			<!-- <div class="tab-pane fade" id="SendFriend" role="tabpanel" aria-labelledby="list-tab-friend">
+				<div class="card">
+					<div class="card-header">
+						<h4>친구에게 보내기</h4>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive" style="overflow: auto;">
+							<form action="/SendFriend" method="POST">
+								보낼사람 : <input type="text" name="SendUser" list="depList"><br>
+								<p>전송할 내용을 입력하세요.</p>
+								<textarea name = "Content" cols="50" rows="3" placeholder="내용을 입력하세요"></textarea>
+								<datalist id="depList">
+									{% for i in all_data%}
+										<option value={{i.UserName}}></option>
+									{%endfor%}
+								</datalist>
+								<input type="submit">
+							</form>
+						</div>
+
+					</div>
+				</div>
+			</div> -->
+			
+		</div>
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+{%with messages = get_flashed_messages()%}
+{%if messages %}
+  <script type="text/javascript">
+	alert("{{messages[-1]}}");
+  </script>
+  {%endif%}
+{%endwith%}
+<script>
+	function getCheckboxValue()  {
+		// 선택된 목록 가져오기
+		var listArray=[]
+
+		$('input[name="check_value"]:checked').each(function(i){//체크된 리스트 저장
+			listArray.push($(this).val());
+		});
+		
+		// 출력
+		$.ajax({
+			type:'POST',
+			url:'/kakao/click_friend',
+			data : 
+				{'result' : listArray} ,
+			dataType:'JSON'
+		});
+
+		alert("전송완료");
+	}
+
+	function getCheckboxValue_Custom()  {
+		var SendMsg=$('input[name=SendMsg]').val()
+		
+		// 선택된 목록 가져오기
+		var listArray=[]
+
+		$('input[name="check_value"]:checked').each(function(i){//체크된 리스트 저장
+			listArray.push($(this).val());
+		});
+		
+		// 출력
+		$.ajax({
+			type:'POST',
+			url:'/kakao/click_friend_Custom',
+			data : 
+				{'result' : listArray,'SendMsg':SendMsg} ,
+			dataType:'JSON'
+		});
+		$('#closeBtn').click();
+
+		alert("전송완료");
+	}
+</script>
+</body>
+</html>
