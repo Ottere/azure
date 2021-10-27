@@ -137,13 +137,14 @@ def index():
 
 @app.route('/hometax/company',methods=['GET','POST'])
 def get_company():
-    CompanyNo = request.form['SendNo'] #사업자번호
+    CompanyNo = request.form['saupNo'] #사업자번호
     print(CompanyNo)
+
     options=webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome(executable_path='/home/azure_admin/hometax/chromedriver', options=options) #각자 (경로)/chromedriver.exe하면 됌
+    driver = webdriver.Chrome('/usr/bin/chromedriver', options=options) #각자 (경로)/chromedriver.exe하면 됌
     driver.maximize_window() #전체화면으로 실행
     driver.implicitly_wait(15) # 묵시적 대기, 활성화를 최대 15초가지 기다린다.
     hometex='https://www.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index.xml' #URL
@@ -152,9 +153,9 @@ def get_company():
     time.sleep(2)
     driver.find_element_by_xpath('//*[@id="textbox81212923"]').click()
 
-    time.sleep(3)
+    time.sleep(8)
 
-    element = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "txppIframe"))) #로그인화면 iframe
+    element = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "txppIframe"))) # iframe
     driver.switch_to.frame(element) #iframe 스위치 (change)
 
     driver.find_element_by_xpath('//*[@id="sub_a_0108010000"]').click()
@@ -171,22 +172,18 @@ def get_company():
     time.sleep(3)
     result_list=[]
     buga = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "grid2_cell_0_1"))).text
-    # result_list.append({"buga":buga})
     result_list.append(buga)
     saup = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "grid2_cell_0_0"))).text
-    # result_list.append({"saup":saup})
     result_list.append(saup)
-    search = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "grid2_cell_0_2"))).text
-    # result_list.append({"search":search})
-    result_list.append(search)
+    searchDate = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "grid2_cell_0_2"))).text
+    result_list.append(searchDate)
+    result_list.append("True")
 
     result_dict = {i : result_list[i] for i in range(len(result_list))}
     print(result_dict)
-    # str(buga),str(saup),str(search)
-    json_list = json.dumps(result_list,ensure_ascii=False)
-    print(json_list)
+    print(result_list)
+    driver.quit()
     return result_dict
-
 
 @app.route("/hometax/crawling")
 def get_data():
@@ -196,7 +193,7 @@ def get_data():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     # chrome 드라이버 chrome 버전에 맞게 다운후 위치변경
-    driver = webdriver.Chrome(executable_path='/home/azure_admin/hometax/chromedriver', options=options) #또는 chromedriver.exe 각자 (경로)/chromedriver.exe하면 됌
+    driver = webdriver.Chrome('/usr/bin/chromedriver', options=options) #또는 chromedriver.exe 각자 (경로)/chromedriver.exe하면 됌
     driver.maximize_window() #전체화면으로 실행
     driver.implicitly_wait(15) # 묵시적 대기, 활성화를 최대 15초가지 기다린다.
 
