@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>User Information and Form</title>
+	
+	<!--JQUERY-->
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	
+	<!-- FRAMEWORK BOOTSTRAP para el estilo de la pagina-->
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script 
+		src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script 
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	
+	<!-- Los iconos tipo Solid de Fontawesome-->
+	<link rel="stylesheet"
+		href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
+	<script src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+	
+	<!-- Nuestro css-->
+	<link rel="stylesheet" type="text/css" href="/hometax/static/css/user-form.css"
+		th:href="@{/css/user-form.css}">
+	<!-- DATA TABLE -->
+	<script src="http://linux202110.zioyou.kr/hometax/static/js/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css">	
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+
+	<script type="text/javascript">
+	    $(document).ready(function() {
+	        //Asegurate que el id que le diste a la tabla sea igual al texto despues del simbolo #
+	        $('#userList').DataTable();
+	    } );
+	</script>
+</head>
+<body>
+	
+
+	<script>
+
+		function data_empty() {
+			$('#result').empty();
+		}
+		function get_companyNo()  {
+			var saupNo=$('input[name=saupNo]').val();
+			console.log(saupNo);
+			var inner = document.getElementById('result');
+			inner.innerHTML="<p style='text-align: center;'>잠시만 기다려주세요.</p>";
+			
+
+			// 출력
+			$.ajax({
+				type:'POST',
+				url:'/hometax/company',
+				data : 
+					{'saupNo':saupNo} ,
+				
+				dataType:'JSON',
+				success:function(result){
+					console.log(result);
+					inner.innerHTML='<table class="type05" style="border-collapse: separate;border-spacing: 1px;text-align: left;line-height: 1.5;border-top: 1px solid #ccc;margin: 20px 10px;"><tr><th scope="row" style="width: 150px;padding: 10px;font-weight: bold;vertical-align: top;border-bottom: 1px solid #ccc;background: #efefef;">사업자등록번호</th><td style="width: 350px;padding: 10px;vertical-align: top;border-bottom: 1px solid #ccc;">'+result[1]+'</td></tr><tr><th scope="row"style="width: 150px;padding: 10px;font-weight: bold;vertical-align: top;border-bottom: 1px solid #ccc;background: #efefef;">사업자등록상태</th><td style="width: 350px;padding: 10px;vertical-align: top;border-bottom: 1px solid #ccc;">'+result[0]+'</td></tr><tr><th scope="row"style="width: 150px;padding: 10px;font-weight: bold;vertical-align: top;border-bottom: 1px solid #ccc;background: #efefef;">조회기준일자</th><td style="width: 350px;padding: 10px;vertical-align: top;border-bottom: 1px solid #ccc;">'+result[2]+'</td></tr></table>';
+				}
+				// error:function(request,status,error){
+    			// 	alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				// }
+			});
+	
+		}
+		
+	</script>
+
+	<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+		  	<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">사업자 등록번호 조회</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input class="form-control" type="text" placeholder="사업자번호를 입력해 주세요" name="saupNo">
+				</div>
+				<div id="result">
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeBtn">닫기</button>
+					<button type="button" class="btn btn-primary" onclick='get_companyNo()'>보내기</button>
+				</div>
+		    </div>
+		</div>
+	</div>
+
+
+
+	<div class="container">
+	<div class="mx-auto col-sm-8 main-section" id="myTab" role="tablist">
+		<ul class="nav nav-tabs justify-content-end">
+			<li class="nav-item">
+				<a class="nav-link" href="/projects/index.html" role="tab" aria-controls="list" aria-selected="false">Home</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link active" id="list-tab" data-toggle="tab" href="#list" role="tab" aria-controls="list" aria-selected="false">리스트</a>
+			</li>
+		</ul>
+
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
+				<div class="card">
+					<div class="card-header">
+						<h4>Roster 
+							<button class="btn btn-outline-info"style="float: right;" data-toggle="modal" data-target="#exampleModalCenter" onclick='data_empty()'>
+								<a style="text-decoration: none; color: black;">사업자등록번호 조회</a>
+							</button>
+							<button class="btn btn-outline-info" style="float: right; margin-right: 5px;">
+								<a href="/hometax/crawling"  style="text-decoration: none; color: black;">전자세금계산서 크롤링</a>
+							</button>
+						</h4>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive" style="overflow: auto;">
+							<table id="userList" class="table table-bordered table-hover table-striped" style="white-space: nowrap;">
+								<thead class="thead-light">
+								<tr>
+									<th scope="col">TransSeq</th>
+									<th scope="col">FromSaupjaRegNo</th>
+									<th scope="col">FromSaupjangNo</th>
+									<th scope="col">FromSaupjaName</th>
+									<th scope="col">FromDaepyoName</th>
+                                    <th scope="col">FromSaupjangAd</th>
+                                    <th scope="col">FromUptae</th>
+                                    <th scope="col">FromJongmok</th>
+                                    <th scope="col">FromEmailAddr1</th>
+                                    <th scope="col">ToSaupjaRegNo</th>
+									<th scope="col">ToSaupjangNo</th>
+									<th scope="col">ToSaupjaName</th>
+									<th scope="col">ToDaepyoName</th>
+									<th scope="col">ToSaupjangAddr</th>
+                                    <th scope="col">ToUptae</th>
+                                    <th scope="col">ToEmailAddr1</th>
+                                    <th scope="col">ToEmailAddr2</th>
+                                    <th scope="col">HomeTaxApprNo</th>
+                                    <th scope="col">RegDate</th>
+									<th scope="col">AmtUnc</th>
+									<th scope="col">AmtTax</th>
+									<th scope="col">EditSayoo</th>
+									<th scope="col">AmtTot</th>
+                                    <th scope="col">AmtCash</th>
+                                    <th scope="col">AmtSupyo</th>
+                                    <th scope="col">AmtUEum</th>
+                                    <th scope="col">AmtMisu</th>
+                                    <th scope="col">GubunRequPay</th>
+                                    <th scope="col">FlowProcYN</th>
+                                    <th scope="col">SyncIndex</th>
+                                    <th scope="col">CorpCode</th>
+									<th></th>
+								</tr>
+								</thead>
+								<tbody>
+									{% for i in all_data%}
+										<tr>
+											<td scope="row">{{i.TransSeq}}</td>
+                                            <td>{{i.FromSaupjaRegNo}}</td>
+											<td>{{i.FromSaupjangNo}}</td>
+											<td>{{i.FromSaupjaName}}</td>
+											<td>{{i.FromDaepyoName}}</td>
+											<td>{{i.FromSaupjangAd}}</td>
+											<td>{{i.FromUptae}}</td>
+											<td>{{i.FromJongmok}}</td>
+											<td>{{i.FromEmailAddr1}}</td>
+											<td>{{i.ToSaupjaRegNo}}</td>
+											<td>{{i.ToSaupjangNo}}</td>
+											<td>{{i.ToSaupjaName}}</td>
+											<td>{{i.ToDaepyoName}}</td>
+											<td>{{i.ToSaupjangAddr}}</td>
+											<td>{{i.ToUptae}}</td>
+											<td>{{i.ToEmailAddr1}}</td>
+											<td>{{i.ToEmailAddr2}}</td>
+											<td>{{i.HomeTaxApprNo}}</td>
+											<td>{{i.RegDate}}</td>
+											<td>{{i.AmtUnc}}</td>
+											<td>{{i.AmtTax}}</td>
+											<td>{{i.EditSayoo}}</td>
+											<td>{{i.AmtTot}}</td>
+											<td>{{i.AmtCash}}</td>
+											<td>{{i.AmtSupyo}}</td>
+											<td>{{i.AmtUEum}}</td>
+											<td>{{i.AmtMisu}}</td>
+											<td>{{i.GubunRequPay}}</td>
+											<td>{{i.FlowProcYN}}</td>
+											<td>{{i.SyncIndex}}</td>
+											<td>{{i.CorpCode}}</td>
+                                            
+											<td>
+												<a href="#" onclick="fEdit('{{i.idx}}','r{{i.FirstName}}','{{i.LastName}}','{{i.UserName}}','{{i.Email}}')"><i class="fas fa-edit"></i></a> | <a style="cursor: pointer;"id ="delete" onclick="fDel('{{i.idx}}')"><i class="fas fa-user-times"></i></a>
+											</td>
+										</tr>
+									{%endfor%}
+								</tbody>
+							</table>
+						</div>
+
+					</div>
+				</div>
+			</div>
+	
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
