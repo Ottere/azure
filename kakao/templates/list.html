@@ -32,10 +32,10 @@
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 
 	<script type="text/javascript">
-	    $(document).ready(function() {
-	        //Asegurate que el id que le diste a la tabla sea igual al texto despues del simbolo #
-	        $('#userList').DataTable();
-	    } );
+	    // $(document).ready(function() {
+	    //     //Asegurate que el id que le diste a la tabla sea igual al texto despues del simbolo #
+	    //     $('#userList').DataTable();
+	    // } );
 	</script>
 </head>
 <body>
@@ -44,7 +44,7 @@
 		<div class="modal-dialog modal-dialog-centered" role="document">
 		  	<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+					<h5 class="modal-title" id="exampleModalLongTitle">자유롭게 메세지 보내기</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -208,33 +208,54 @@
 			url:'/kakao/click_friend',
 			data : 
 				{'result' : listArray} ,
-			dataType:'JSON'
+			dataType:'JSON',
+			success:function(){
+				alert("전송완료");
+			}
 		});
 
-		alert("전송완료");
+		
 	}
 
 	function getCheckboxValue_Custom()  {
 		var SendMsg=$('input[name=SendMsg]').val()
-		
-		// 선택된 목록 가져오기
-		var listArray=[]
+		if(SendMsg==''){
+			alert('메세지를 입력해주세요')
+			
+		}
+		else{
+			// 선택된 목록 가져오기
+			var listArray=[]
 
-		$('input[name="check_value"]:checked').each(function(i){//체크된 리스트 저장
-			listArray.push($(this).val());
-		});
-		
-		// 출력
-		$.ajax({
-			type:'POST',
-			url:'/kakao/click_friend_Custom',
-			data : 
-				{'result' : listArray,'SendMsg':SendMsg} ,
-			dataType:'JSON'
-		});
-		$('#closeBtn').click();
+			$('input[name="check_value"]:checked').each(function(i){//체크된 리스트 저장
+			
+				listArray.push($(this).val());
+			});
+			if(listArray==''){
+				alert('보낼사람을 선택해주세요')
+			}else{
+				// 출력
+				$.ajax({
+					type:'POST',
+					url:'/kakao/click_friend_Custom',
+					data : 
+						{'result' : listArray,'SendMsg':SendMsg} ,
+					dataType:'JSON',
+					success:function(){
+						alert("전송완료");
+					}
+				});
+				$('#closeBtn').click();
 
-		alert("전송완료");
+			}
+
+			
+
+		}
+
+		
+
+		
 	}
 </script>
 </body>
